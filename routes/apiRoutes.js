@@ -1,43 +1,41 @@
 let path = require("path");
 let fs = require("fs");
 
-
-function readFileAsync(path, encoding) {
-	return new Promise(function (resolve, reject) {
-		fs.readFile(path, encoding, function (err, data) {
-			if (err) {
-				return reject(err);
-			}
-
-			resolve(data);
-		});
-	});
-}
-let notes = require("../db/db.json")
+//let notes = require("../db/db.json")
 module.exports = function (app) {
-	// notes = fs.readFile("../db/db.json", "utf8", function (err, data) {
-	// 	if (err) {
-	// 		return err;
-	// 	}
-	// 	console.log(data);
-	// 	return data;
-	// });
+
 	app.get("/api/notes", function (req, res) {
-		let idNotes = [];
+		fs.readFile(path.join(__dirname, "../db/db.json"), "utf8", function (err, data) {
+			if (err) {
+				return err;
+			}
+			console.log(data);
+			notes = JSON.parse(data);
+			res.json(notes);
+		});
+		// res.json(notes);
+		// console.log(notes);
+	})
+	app.post("/api/notes", function (req, res) {
+		let currentNote = req.body;
+		notes.push(currentNote)
+		let notesIDs = [];
+		let maxID = 0;
 		for (i = 0; i < notes.length; i++) {
-			notes[i].id = i + 1;
+			if (notes[i].id) {
+				notesIDs.push(notes[i].id);
+				if (notes[i].id >= maxID) {
+					maxID = notes[i].id
+				}
+			} else {
+				notes[i].id = maxID + 1
+			}
 		}
-
-
-		res.json(notes);
-		console.log(notes);
-
 		fs.writeFile(path.join(__dirname, "../db/db.json"), JSON.stringify(notes), (err) => {
 			if (err) throw err;
 			console.log('The file has been saved!');
 		});
 	})
-
 
 
 }

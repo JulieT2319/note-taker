@@ -10,13 +10,13 @@ let PORT = process.env.PORT || 3000;
 //express data handling
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+app.use(express.static(__dirname + "/public"));
 //routes
 
 require("./routes/apiRoutes")(app);
 require("./routes/htmlRoutes")(app);
 
 //start server
-app.listen(PORT, function() {
+app.listen(PORT, function () {
 	console.log("App listening on PORT: " + PORT);
 });

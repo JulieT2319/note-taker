@@ -34,5 +34,23 @@ module.exports = function (app) {
 			});
 		});
 	});
+
+	app.delete("/api/notes/:id", function (req, res) {
+		let removeID = req.params.id;
+		fs.readFile(path.join(__dirname, "../db/db.json"), "utf8", function (err, data) {
+			if (err) {
+				return err;
+			}
+			notes = JSON.parse(data);
+			let newNotes = notes.filter(function (note) {
+				return note.id != removeID;
+			});
+			fs.writeFile(path.join(__dirname, "../db/db.json"), JSON.stringify(newNotes), (err) => {
+				if (err) throw err;
+				console.log('The note has been removed.');
+				res.sendFile(path.join(__dirname, "../public/notes.html"))
+			});
+		});
+	});
 }
 

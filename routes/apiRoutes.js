@@ -31,6 +31,7 @@ module.exports = function (app) {
 			fs.writeFile(path.join(__dirname, "../db/db.json"), JSON.stringify(notes), (err) => {
 				if (err) throw err;
 				console.log('The note has been added.');
+				res.sendFile(path.join(__dirname, "../public/notes.html"))
 			});
 		});
 	});
